@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O que é Big Data?</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fc;
+    --surface: #ffffff;
+    --surface2: #f1f4f9;
+    --accent: #ea6c00;
+    --accent2: #2563eb;
+    --accent3: #059669;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e2e8f0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(234,108,0,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(249,115,22,0.3);
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 span {
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 3rem;
+  }
+
+  .hero-author {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* GRID STATS */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-item {
+    background: var(--surface);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: background 0.2s;
+  }
+
+  .stat-item:hover { background: #f1f4f9; }
+
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+
+  /* SECTIONS */
+  .section {
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-body {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ORIGEM TIMELINE */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 2rem;
+    border-left: 2px solid var(--border);
+    padding-left: 2rem;
+  }
+
+  .tl-item {
+    position: relative;
+    padding-bottom: 2.5rem;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -2.6rem;
+    top: 0.4rem;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(234,108,0,0.35);
+  }
+
+  .tl-year {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  .tl-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .tl-text { font-size: 0.9rem; color: var(--muted); }
+
+  /* DEFINIÇÕES */
+  .def-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .def-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .def-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .def-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .def-source {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .def-text { font-size: 0.95rem; color: var(--muted); line-height: 1.6; }
+
+  /* 5 Vs */
+  .vs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .v-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .v-card:hover { transform: translateY(-4px); }
+
+  .v-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    position: absolute;
+    top: 1rem; right: 1rem;
+  }
+
+  .v-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .v-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .v-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .v-desc { font-size: 0.8rem; color: var(--muted); }
+
+  /* APLICAÇÕES */
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .app-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: border-color 0.2s;
+  }
+
+  .app-card:hover { border-color: var(--accent2); }
+
+  .app-icon { font-size: 1.8rem; }
+  .app-title { font-size: 1rem; font-weight: 700; }
+  .app-text { font-size: 0.88rem; color: var(--muted); }
+
+  .app-highlight {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent3);
+    font-weight: 700;
+  }
+
+  /* DESAFIOS */
+  .challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .ch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.4rem;
+    border-left: 3px solid var(--accent);
+    transition: background 0.2s;
+  }
+
+  .ch-card:hover { background: var(--surface2); }
+
+  .ch-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .ch-text { font-size: 0.8rem; color: var(--muted); }
+
+  /* CONSTITUINTES FLOW */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 2.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    width: 160px;
+    flex-shrink: 0;
+  }
+
+  .flow-step:nth-child(1) { border-top: 3px solid var(--accent); }
+  .flow-step:nth-child(3) { border-top: 3px solid var(--accent2); }
+  .flow-step:nth-child(5) { border-top: 3px solid var(--accent3); }
+  .flow-step:nth-child(7) { border-top: 3px solid #a855f7; }
+
+  .flow-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .flow-icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .flow-name { font-size: 0.85rem; font-weight: 700; }
+  .flow-desc { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: var(--muted);
+    padding: 0 0.5rem;
+    flex-shrink: 0;
+  }
+
+  /* SMART DEVICE */
+  .smart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .smart-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.8rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .smart-item:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+  }
+
+  .smart-item span { font-size: 1.4rem; margin-bottom: 0.4rem; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: linear-gradient(135deg, rgba(234,108,0,0.07), rgba(37,99,235,0.07));
+    border: 1px solid rgba(234,108,0,0.25);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    margin: 3rem 0 0;
+  }
+
+  .callout-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .callout-label { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+  /* INDUSTRIA GRID */
+  .industry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .ind-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+
+  .ind-card:hover { transform: translateY(-3px); }
+
+  .ind-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent2));
+  }
+
+  .ind-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+  .ind-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .ind-stat {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent3);
+    margin-bottom: 0.4rem;
+  }
+  .ind-desc { font-size: 0.85rem; color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* SCROLL REVEAL (CSS only) */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .smart-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow-arrow { display: none; }
+    .flow { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">CEAUT · UTFPR · Junho 2026</div>
+  <h1>O que é<br><span>Big Data?</span></h1>
+  <p class="hero-sub">Uma jornada pelos conceitos, estatísticas, desafios e aplicações do maior fenômeno de dados da história moderna.</p>
+  <div class="hero-author">Prof. Clayton Kossoski &nbsp;·&nbsp; claytonutf@gmail.com</div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num">2,5 QT</span>
+    <span class="stat-label">bytes gerados<br>por dia</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">44 ZB</span>
+    <span class="stat-label">dados no<br>universo digital</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">$274 bi</span>
+    <span class="stat-label">mercado global<br>de big data</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">$79 bi</span>
+    <span class="stat-label">big data<br>na saúde</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">$146 k</span>
+    <span class="stat-label">salário médio<br>profissional IA</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">$500 bi</span>
+    <span class="stat-label">gastos em<br>cloud anualmente</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ORIGEM -->
+<section class="section reveal">
+  <div class="section-eyebrow">01 · História</div>
+  <h2 class="section-title">Origem do Termo</h2>
+  <p class="section-body">O termo "big data" surgiu em meio a debates acadêmicos e passou a ganhar força conforme as tecnologias de coleta e processamento evoluíam.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">Anos 1990</div>
+      <div class="tl-title">John Mashey</div>
+      <div class="tl-text">Um dos primeiros a utilizar o termo "big data" em apresentações e discussões internas sobre o crescimento massivo de dados.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2001</div>
+      <div class="tl-title">Doug Laney · Meta Group (Gartner)</div>
+      <div class="tl-text">Definiu formalmente o conceito em relatório de pesquisa, introduzindo o framework dos 3Vs — Volume, Velocidade e Variedade.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">Anos 2000 em diante</div>
+      <div class="tl-title">Explosão global</div>
+      <div class="tl-text">Com o avanço das tecnologias de coleta e armazenamento, o big data passou a ser amplamente reconhecido e discutido em todo o mundo.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEFINIÇÕES -->
+<section class="section reveal">
+  <div class="section-eyebrow">02 · Conceito</div>
+  <h2 class="section-title">O que dizem as definições</h2>
+  <p class="section-body">Diferentes organizações abordam big data sob perspectivas distintas — todas convergem para a ideia de dados além da capacidade tradicional de processamento.</p>
+
+  <div class="def-grid">
+    <div class="def-card">
+      <div class="def-source">Definição Popular</div>
+      <p class="def-text">Dados tão volumosos que os métodos tradicionais de processamento simplesmente não conseguem lidar com eles.</p>
+    </div>
+    <div class="def-card">
+      <div class="def-source">Oracle</div>
+      <p class="def-text">Conjuntos de dados tão complexos que os programas de processamento tradicionais não conseguem gerenciá-los adequadamente.</p>
+    </div>
+    <div class="def-card">
+      <div class="def-source">Oxford</div>
+      <p class="def-text">Conjuntos de dados extremamente grandes que podem ser analisados computacionalmente para revelar padrões, tendências e associações, especialmente relacionadas ao comportamento humano.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OS 5 Vs -->
+<section class="section reveal">
+  <div class="section-eyebrow">03 · Caracterização</div>
+  <h2 class="section-title">Os 5 Vs do Big Data</h2>
+  <p class="section-body">Cinco dimensões fundamentais definem o que torna um conjunto de dados verdadeiramente "grande".</p>
+
+  <div class="vs-grid">
+    <div class="v-card">
+      <span class="v-num">01</span>
+      <span class="v-icon">📦</span>
+      <div class="v-name">Volume</div>
+      <div class="v-label">Quantidade</div>
+      <div class="v-desc">O volume de dados gerados que precisam ser processados — de terabytes a zettabytes.</div>
+    </div>
+    <div class="v-card">
+      <span class="v-num">02</span>
+      <span class="v-icon">⚡</span>
+      <div class="v-name">Velocity</div>
+      <div class="v-label">Velocidade</div>
+      <div class="v-desc">A rapidez com que os dados são produzidos, transmitidos e processados em tempo real.</div>
+    </div>
+    <div class="v-card">
+      <span class="v-num">03</span>
+      <span class="v-icon">🔀</span>
+      <div class="v-name">Variety</div>
+      <div class="v-label">Variedade</div>
+      <div class="v-desc">A diversidade de origens e formatos — textos, imagens, vídeos, sensores e muito mais.</div>
+    </div>
+    <div class="v-card">
+      <span class="v-num">04</span>
+      <span class="v-icon">✅</span>
+      <div class="v-name">Veracity</div>
+      <div class="v-label">Veracidade</div>
+      <div class="v-desc">A qualidade e confiabilidade dos dados, considerando fontes incompletas ou inseguras.</div>
+    </div>
+    <div class="v-card">
+      <span class="v-num">05</span>
+      <span class="v-icon">💎</span>
+      <div class="v-name">Value</div>
+      <div class="v-label">Valor</div>
+      <div class="v-desc">O resultado final — o insight e o benefício extraídos ao processar e analisar os dados.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONSTITUINTES -->
+<section class="section reveal">
+  <div class="section-eyebrow">04 · Estrutura</div>
+  <h2 class="section-title">Da coleta à decisão</h2>
+  <p class="section-body">O ciclo do big data percorre quatro etapas que transformam eventos brutos em ações concretas.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-icon">🟠</div>
+      <div class="flow-name">Dados</div>
+      <div class="flow-desc">Dados brutos e crus — um momento mensurável</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-icon">🔵</div>
+      <div class="flow-name">Informação</div>
+      <div class="flow-desc">Reunião dos dados processados</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-icon">🟢</div>
+      <div class="flow-name">Insight</div>
+      <div class="flow-desc">Resultado para um projeto específico</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">04</div>
+      <div class="flow-icon">🟣</div>
+      <div class="flow-name">Decisão</div>
+      <div class="flow-desc">Ação tomada com base no processamento</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DESAFIOS -->
+<section class="section reveal">
+  <div class="section-eyebrow">05 · Obstáculos</div>
+  <h2 class="section-title">Principais Desafios</h2>
+  <p class="section-body">Trabalhar com big data envolve superar barreiras técnicas, operacionais e estratégicas que tornam o campo tão desafiador quanto promissor.</p>
+
+  <div class="challenges-grid">
+    <div class="ch-card">
+      <div class="ch-title">☁️ Infraestrutura</div>
+      <div class="ch-text">Nuvem, tráfego de rede e latência impõem restrições ao desempenho em tempo real.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">💰 Custo</div>
+      <div class="ch-text">Big data é o ativo mais valioso atualmente — e armazená-lo e processá-lo tem custo elevado.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🗂️ O que guardar?</div>
+      <div class="ch-text">Decidir o que vale armazenar é um desafio estratégico fundamental para qualquer organização.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🔒 Segurança</div>
+      <div class="ch-text">Backup e proteção de dados sensíveis demandam estratégias robustas e contínuas.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🏗️ Estrutura de dados</div>
+      <div class="ch-text">Dados estruturados, não estruturados e incompletos exigem abordagens diferentes.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">⚙️ Gerenciamento</div>
+      <div class="ch-text">Standalone, cluster, cloud, IoT e mobile — cada ambiente impõe suas próprias complexidades.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🔄 Transformação (ETL)</div>
+      <div class="ch-text">O pipeline de Extração, Transformação e Carga é o coração operacional do big data.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- APLICAÇÕES NA INDÚSTRIA -->
+<section class="section reveal">
+  <div class="section-eyebrow">06 · Mercado</div>
+  <h2 class="section-title">Big Data na Indústria</h2>
+  <p class="section-body">Empresas e setores que já utilizam big data em escala e obtêm resultados expressivos.</p>
+
+  <div class="industry-grid">
+    <div class="ind-card">
+      <div class="ind-icon">🎬</div>
+      <div class="ind-name">Netflix</div>
+      <div class="ind-stat">$1 bilhão/ano</div>
+      <div class="ind-desc">Economia gerada por algoritmos de recomendação personalizados para milhões de usuários.</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-icon">✈️</div>
+      <div class="ind-name">Agências de Viagem</div>
+      <div class="ind-stat">68%</div>
+      <div class="ind-desc">Das agências pretendem investir em análise preditiva e Business Intelligence.</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-icon">🌐</div>
+      <div class="ind-name">Internet das Coisas</div>
+      <div class="ind-stat">&gt; $1 trilhão</div>
+      <div class="ind-desc">Gastos anuais previstos em dispositivos e infraestrutura de IoT.</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-icon">🔍</div>
+      <div class="ind-name">Google Search</div>
+      <div class="ind-stat">100 mil/seg</div>
+      <div class="ind-desc">Buscas processadas por segundo, exigindo infraestrutura massiva de dados em tempo real.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- APLICAÇÕES: DADOS PESSOAS -->
+<section class="section reveal">
+  <div class="section-eyebrow">07 · Fontes de Dados</div>
+  <h2 class="section-title">Big Data produzido por pessoas</h2>
+  <p class="section-body">Humanos geram uma quantidade imensa de dados não estruturados — o desafio está em transformá-los em valor.</p>
+
+  <div class="apps-grid">
+    <div class="app-card">
+      <div class="app-icon">🎯</div>
+      <div class="app-title">Persona e Segmentação</div>
+      <div class="app-text">Análise comportamental para construir perfis detalhados de consumidores e usuários.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">😊</div>
+      <div class="app-title">Análise de Sentimento</div>
+      <div class="app-text">Processamento de avaliações, comentários e redes sociais para entender a percepção de marcas e produtos.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">💡</div>
+      <div class="app-title">Recomendação</div>
+      <div class="app-text">Algoritmos que aprendem padrões de consumo para sugerir produtos, serviços e conteúdos relevantes.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">🧬</div>
+      <div class="app-title">Genoma Humano</div>
+      <div class="app-text">O genoma de uma pessoa representa ~100 GB de dados. O sequenciamento global já ultrapassa 40 exabytes.</div>
+      <div class="app-highlight">3 bilhões de pares de bases</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">🏥</div>
+      <div class="app-title">Tratamento do Câncer</div>
+      <div class="app-text">Registros de pacientes e dados de equipamentos eletrônicos alimentam modelos preditivos e personalizados de tratamento.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SMART DEVICES -->
+<section class="section reveal">
+  <div class="section-eyebrow">08 · Dispositivos Inteligentes</div>
+  <h2 class="section-title">O que torna um dispositivo inteligente?</h2>
+  <p class="section-body">Para ser considerado inteligente, um dispositivo precisa de três capacidades fundamentais.</p>
+
+  <div class="def-grid" style="margin-top: 2rem;">
+    <div class="def-card">
+      <div class="def-source">Conectividade</div>
+      <p class="def-text">Conectar-se com outros dispositivos e redes, participando de ecossistemas maiores de dados.</p>
+    </div>
+    <div class="def-card">
+      <div class="def-source">Coleta e Análise</div>
+      <p class="def-text">Coletar e analisar dados automaticamente a partir de sensores e interações com o ambiente.</p>
+    </div>
+    <div class="def-card">
+      <div class="def-source">Decisão Autônoma</div>
+      <p class="def-text">Tomar decisões com base nos dados — sem necessidade de intervenção humana constante.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 2.5rem;">
+    <p style="font-size:0.85rem; color: var(--muted); margin-bottom: 1rem;">Exemplo: dados de um smartwatch</p>
+    <div class="smart-grid" style="max-width:420px;">
+      <div class="smart-item"><span>🌡️</span>Temperatura corporal</div>
+      <div class="smart-item"><span>📏</span>Distância percorrida</div>
+      <div class="smart-item"><span>😴</span>Condição do sono</div>
+      <div class="smart-item"><span>🏃</span>Degraus subidos</div>
+      <div class="smart-item"><span>📍</span>GPS</div>
+      <div class="smart-item"><span>📱</span>Vai além do smartphone!</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SMART CITY -->
+<section class="section reveal">
+  <div class="section-eyebrow">09 · Cidades do Futuro</div>
+  <h2 class="section-title">Smart City</h2>
+  <p class="section-body">Cidades inteligentes integram dados de múltiplas fontes para otimizar serviços urbanos e melhorar a qualidade de vida.</p>
+
+  <div class="challenges-grid">
+    <div class="ch-card">
+      <div class="ch-title">📱 Dispositivos de usuário</div>
+      <div class="ch-text">Smartphones, tablets e wearables gerando dados de localização e comportamento.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🏠 Aplicações domésticas</div>
+      <div class="ch-text">Eletrodomésticos e sistemas de casa conectados ao ecossistema urbano.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">📹 Câmeras de vigilância</div>
+      <div class="ch-text">Redes de câmeras inteligentes para segurança pública e monitoramento de tráfego.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🚦 Sinais de trânsito</div>
+      <div class="ch-text">Controle dinâmico do fluxo urbano com base em dados em tempo real.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">❤️ Monitoramento de saúde</div>
+      <div class="ch-text">Sistemas conectados de saúde pública e hospitalar para gestão proativa.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🚗 Veículos autônomos</div>
+      <div class="ch-text">Carros que processam dados do ambiente para navegar com segurança sem motorista.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AERONAUTICA -->
+<section class="section reveal">
+  <div class="section-eyebrow">10 · Caso de Uso</div>
+  <h2 class="section-title">Big Data na Aeronáutica</h2>
+  <p class="section-body">Um avião moderno é uma das máquinas que mais produz dados no mundo — e a Boeing usa isso em escala global.</p>
+
+  <div class="callout">
+    <div class="callout-num">+500 GB</div>
+    <div class="callout-label">de dados gerados por voo</div>
+  </div>
+
+  <div class="challenges-grid" style="margin-top: 2rem;">
+    <div class="ch-card">
+      <div class="ch-title">🌤️ Condições do clima</div>
+      <div class="ch-text">Dados meteorológicos em tempo real para otimização de rotas.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">👤 Serviços ao cliente</div>
+      <div class="ch-text">Personalização da experiência de bordo a partir de preferências do passageiro.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">📊 Painel da aeronave</div>
+      <div class="ch-text">Monitoramento contínuo de todos os sistemas de voo e navegação.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-title">🔧 Análises mecânicas</div>
+      <div class="ch-text">Manutenção preditiva baseada no estado real dos componentes.</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--accent3);">
+    <p style="font-size: 0.95rem; color: var(--muted);">
+      A <strong style="color: var(--text);">Boeing</strong> analisa <strong style="color: var(--accent3);">2 milhões de condições</strong> de <strong style="color: var(--accent3);">4.000 aeronaves</strong> dentro do programa <em>Airplane Health Management</em>.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Material elaborado pelo <strong>Prof. Clayton Kossoski</strong> para o</p>
+  <p style="margin-top: 0.4rem;">Curso de Especialização em Automação Industrial (CEAUT) · UTFPR · Junho 2026</p>
+  <p style="margin-top: 1rem;"><a href="mailto:claytonutf@gmail.com">claytonutf@gmail.com</a></p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
