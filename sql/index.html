@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL - A Linguagem de Manipulação de Dados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.8s ease-out;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            border-left: 3px solid #667eea;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -46px;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .year {
+            font-weight: bold;
+            color: #764ba2;
+            font-size: 1.3em;
+        }
+
+        .code-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .code-example::before {
+            content: 'SQL';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #667eea;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .keyword {
+            color: #569cd6;
+            font-weight: bold;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .example-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .example-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .example-title {
+            color: #764ba2;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SQL</h1>
+            <p class="subtitle">Structured Query Language - A Linguagem de Manipulação de Dados</p>
+            <p class="subtitle">Curso de Especialização em Automação Industrial (CEAUT) — UTFPR — 2026</p>
+            <p class="subtitle"><b>Professor: Clayton Kossoski</b></p>
+        </header>
+
+        <div class="card">
+            <h2><span class="icon">📜</span>História do SQL</h2>
+            <p style="margin-bottom: 30px;">O SQL revolucionou a forma como interagimos com dados, tornando-se a linguagem padrão para gerenciamento de bancos de dados relacionais.</p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="year">1970</span>
+                    <p>Edgar F. Codd, pesquisador da IBM, publica o artigo "A Relational Model of Data for Large Shared Data Banks", estabelecendo as bases teóricas dos bancos de dados relacionais.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">1974</span>
+                    <p>Donald Chamberlin e Raymond Boyce criam o SEQUEL (Structured English Query Language) na IBM, que mais tarde se tornaria SQL.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">1979</span>
+                    <p>A Relational Software, Inc. (mais tarde Oracle Corporation) lança o primeiro sistema comercial de SQL.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">1986</span>
+                    <p>SQL é adotado como padrão pela ANSI (American National Standards Institute).</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">Hoje</span>
+                    <p>SQL é usado por milhões de desenvolvedores e empresas em todo o mundo, gerenciando desde pequenas aplicações até grandes sistemas corporativos.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">💡</span>O que é SQL?</h2>
+            <p>SQL é uma <span class="highlight">linguagem declarativa</span> projetada para gerenciar e manipular dados armazenados em sistemas de gerenciamento de banco de dados relacionais (RDBMS). Com SQL, você pode:</p>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li>📊 Consultar dados de forma eficiente</li>
+                <li>✏️ Inserir, atualizar e deletar registros</li>
+                <li>🏗️ Criar e modificar estruturas de banco de dados</li>
+                <li>🔒 Controlar acesso e permissões</li>
+                <li>📈 Realizar análises complexas de dados</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">🎯</span>Exemplos Práticos</h2>
+            
+            <div class="example-grid">
+                <div class="example-card">
+                    <div class="example-title">SELECT - Consultar Dados</div>
+                    <p>Recupera informações do banco de dados</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">INSERT - Inserir Dados</div>
+                    <p>Adiciona novos registros às tabelas</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">UPDATE - Atualizar Dados</div>
+                    <p>Modifica registros existentes</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">DELETE - Remover Dados</div>
+                    <p>Exclui registros das tabelas</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">JOIN - Combinar Tabelas</div>
+                    <p>Une dados de múltiplas tabelas</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">GROUP BY - Agrupar Dados</div>
+                    <p>Agrupa resultados para análises</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 40px; color: #764ba2;">Estrutura do Banco de Dados SQL Tutorial</h3>
+            <p style="margin: 15px 0; padding: 15px; background: #f0f4ff; border-radius: 8px;">
+                Os exemplos a seguir utilizam um banco de dados <b><a href="https://www.sqltutorial.org/sql-sample-database/" target="_blank">Sample Database</a> </b> do site <a href="https://www.sqltutorial.org/" target="_blank" rel="noopener noreferrer">SQL Tutorial</a> com as seguintes tabelas: 
+                <strong>employees</strong> (funcionários), <strong>departments</strong> (departamentos), 
+                <strong>jobs</strong> (cargos), <strong>locations</strong> (localidades), 
+                <strong>countries</strong> (países), <strong>regions</strong> (regiões) e <strong>dependents</strong> (dependentes).
+            </p>
+
+            <h2 style="margin-top: 50px; color: #764ba2; border-color: #28a745;">🌱 Queries Básicas - Primeiros Passos</h2>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">1. SELECT * - Selecionar Todos os Dados</h3>
+            <div class="code-example">
+<span class="comment">-- Buscar TODOS os campos de TODOS os funcionários</span>
+    <br />
+<span class="keyword">SELECT</span> *
+<span class="keyword">FROM</span> employees;
+    <br />
+<span class="comment">-- Buscar todos os departamentos</span>
+    <br />
+<span class="keyword">SELECT</span> *
+<span class="keyword">FROM</span> departments;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">2. SELECT com Colunas Específicas</h3>
+            <div class="code-example">
+<span class="comment">-- Buscar apenas nome e sobrenome dos funcionários</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name
+<span class="keyword">FROM</span> employees;
+    <br />
+<span class="comment">-- Buscar nome, email e salário</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, email, salary
+<span class="keyword">FROM</span> employees;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">3. WHERE - Filtrar Dados com Condições</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários com salário maior que 10000</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary > 10000;
+    <br />
+<span class="comment">-- Funcionários de um departamento específico</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, department_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> department_id = 5;
+    <br />
+<span class="comment">-- Funcionários com sobrenome específico</span>
+    <br />
+<span class="keyword">SELECT</span> *
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> last_name = <span class="string">'King'</span>;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">4. ORDER BY - Ordenar Resultados</h3>
+            <div class="code-example">
+<span class="comment">-- Ordenar funcionários por salário (do menor para o maior)</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">ORDER BY</span> salary;
+    <br />
+<span class="comment">-- Ordenar por salário decrescente (do maior para o menor)</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">ORDER BY</span> salary <span class="keyword">DESC</span>;
+    <br />
+<span class="comment">-- Ordenar por sobrenome alfabeticamente</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name
+<span class="keyword">FROM</span> employees
+<span class="keyword">ORDER BY</span> last_name;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">5. LIMIT - Limitar Quantidade de Resultados</h3>
+            <div class="code-example">
+<span class="comment">-- Buscar apenas os 5 primeiros funcionários</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name
+<span class="keyword">FROM</span> employees
+<span class="keyword">LIMIT</span> 5;
+    <br />
+<span class="comment">-- Top 10 maiores salários</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">ORDER BY</span> salary <span class="keyword">DESC</span>
+<span class="keyword">LIMIT</span> 10;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">6. Operadores Lógicos - AND, OR, NOT</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários com salário entre 5000 e 10000</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary >= 5000 <span class="keyword">AND</span> salary <= 10000;
+    <br />
+<span class="comment">-- Funcionários dos departamentos 5 OU 6</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, department_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> department_id = 5 <span class="keyword">OR</span> department_id = 6;
+    <br />
+<span class="comment">-- Funcionários que NÃO estão no departamento 5</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, department_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE NOT</span> department_id = 5;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">7. BETWEEN - Valores em um Intervalo</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários com salário entre 5000 e 10000</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary <span class="keyword">BETWEEN</span> 5000 <span class="keyword">AND</span> 10000;
+    <br />
+<span class="comment">-- Funcionários contratados entre 1970 e 2020</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, hire_date
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> hire_date <span class="keyword">BETWEEN</span> <span class="string">'1970-01-01'</span> <span class="keyword">AND</span> <span class="string">'2020-12-31'</span>;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">8. IN - Verificar Múltiplos Valores</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários dos departamentos 1, 2 ou 3</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, department_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> department_id <span class="keyword">IN</span> (1, 2, 3);
+    <br />
+<span class="comment">-- Funcionários de cidades específicas</span>
+    <br />
+<span class="keyword">SELECT</span> l.city, e.first_name, e.last_name
+<span class="keyword">FROM</span> employees e
+<span class="keyword">JOIN</span> departments d <span class="keyword">ON</span> e.department_id = d.department_id
+<span class="keyword">JOIN</span> locations l <span class="keyword">ON</span> d.location_id = l.location_id
+<span class="keyword">WHERE</span> l.city <span class="keyword">IN</span> (<span class="string">'Seattle'</span>, <span class="string">'Toronto'</span>, <span class="string">'London'</span>);
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">9. LIKE - Busca com Padrões</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários cujo nome começa com 'J'</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> first_name <span class="keyword">LIKE</span> <span class="string">'J%'</span>;
+    <br />
+<span class="comment">-- Funcionários cujo sobrenome termina com 'son'</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> last_name <span class="keyword">LIKE</span> <span class="string">'%son'</span>;
+    <br />
+<span class="comment">-- Funcionários com 'an' em qualquer parte do nome</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> first_name <span class="keyword">LIKE</span> <span class="string">'%an%'</span>;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">10. IS NULL / IS NOT NULL - Valores Nulos</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários sem gerente (campo manager_id nulo)</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, manager_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> manager_id <span class="keyword">IS NULL</span>;
+    <br />
+<span class="comment">-- Funcionários que possuem gerente</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, manager_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> manager_id <span class="keyword">IS NOT NULL</span>;
+    <br />
+<span class="comment">-- Departamentos sem localização definida</span>
+    <br />
+<span class="keyword">SELECT</span> department_name
+<span class="keyword">FROM</span> departments
+<span class="keyword">WHERE</span> location_id <span class="keyword">IS NULL</span>;
+            </div>
+
+            <h2 style="margin-top: 50px; color: #764ba2; border-color: #ffc107;">⚡ Queries Intermediárias</h2>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">11. COUNT - Contar Registros</h3>
+            <div class="code-example">
+<span class="comment">-- Contar quantos funcionários existem</span>
+    <br />
+<span class="keyword">SELECT COUNT</span>(*) <span class="keyword">AS</span> total_employees
+<span class="keyword">FROM</span> employees;
+    <br />
+<span class="comment">-- Contar funcionários por departamento</span>
+    <br />
+<span class="keyword">SELECT</span> department_id, <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> total
+<span class="keyword">FROM</span> employees
+<span class="keyword">GROUP BY</span> department_id;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">12. AVG, MIN, MAX, SUM - Funções de Agregação</h3>
+            <div class="code-example">
+<span class="comment">-- Calcular média salarial</span>
+    <br />
+<span class="keyword">SELECT AVG</span>(salary) <span class="keyword">AS</span> average_salary
+<span class="keyword">FROM</span> employees;
+    <br />
+<span class="comment">-- Encontrar menor e maior salário</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    <span class="keyword">MIN</span>(salary) <span class="keyword">AS</span> lowest_salary,
+    <span class="keyword">MAX</span>(salary) <span class="keyword">AS</span> highest_salary
+<span class="keyword">FROM</span> employees;
+    <br />
+<span class="comment">-- Soma total da folha de pagamento</span>
+    <br />
+<span class="keyword">SELECT SUM</span>(salary) <span class="keyword">AS</span> total_payroll
+<span class="keyword">FROM</span> employees;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">13. GROUP BY - Agrupar Resultados</h3>
+            <div class="code-example">
+<span class="comment">-- Média salarial por departamento</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    department_id,
+    <span class="keyword">AVG</span>(salary) <span class="keyword">AS</span> avg_salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">GROUP BY</span> department_id;
+    <br />
+<span class="comment">-- Contar funcionários por cargo</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    job_id,
+    <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> employee_count
+<span class="keyword">FROM</span> employees
+<span class="keyword">GROUP BY</span> job_id
+<span class="keyword">ORDER BY</span> employee_count <span class="keyword">DESC</span>;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">14. HAVING - Filtrar Grupos</h3>
+            <div class="code-example">
+<span class="comment">-- Departamentos com mais de 5 funcionários</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    department_id,
+    <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> total
+<span class="keyword">FROM</span> employees
+<span class="keyword">GROUP BY</span> department_id
+<span class="keyword">HAVING COUNT</span>(*) > 5;
+    <br />
+<span class="comment">-- Departamentos com salário médio acima de 8000</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    department_id,
+    <span class="keyword">AVG</span>(salary) <span class="keyword">AS</span> avg_salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">GROUP BY</span> department_id
+<span class="keyword">HAVING AVG</span>(salary) > 8000;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">15. INNER JOIN - Juntar Duas Tabelas</h3>
+            <div class="code-example">
+<span class="comment">-- Funcionários com nome do departamento</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    e.first_name,
+    e.last_name,
+    d.department_name
+<span class="keyword">FROM</span> employees e
+<span class="keyword">INNER JOIN</span> departments d 
+    <span class="keyword">ON</span> e.department_id = d.department_id;
+    <br />
+<span class="comment">-- Funcionários com título do cargo</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    e.first_name,
+    e.last_name,
+    j.job_title,
+    e.salary
+<span class="keyword">FROM</span> employees e
+<span class="keyword">INNER JOIN</span> jobs j 
+    <span class="keyword">ON</span> e.job_id = j.job_id;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">16. LEFT JOIN - Incluir Registros Sem Correspondência</h3>
+            <div class="code-example">
+<span class="comment">-- Todos os departamentos e seus funcionários (mesmo sem funcionários)</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    d.department_name,
+    e.first_name,
+    e.last_name
+<span class="keyword">FROM</span> departments d
+<span class="keyword">LEFT JOIN</span> employees e 
+    <span class="keyword">ON</span> d.department_id = e.department_id
+<span class="keyword">ORDER BY</span> d.department_name;
+            </div>
+    <br />
+            <h3 style="margin-top: 30px; color: #764ba2;">17. DISTINCT - Valores Únicos</h3>
+                <br />
+            <div class="code-example">
+<span class="comment">-- Listar todos os departamentos únicos</span>
+    <br />
+<span class="keyword">SELECT DISTINCT</span> department_id
+<span class="keyword">FROM</span> employees;
+    <br />
+<span class="comment">-- Listar cidades únicas onde há escritórios</span>
+    <br />
+<span class="keyword">SELECT DISTINCT</span> city
+<span class="keyword">FROM</span> locations
+<span class="keyword">ORDER BY</span> city;
+            </div>
+
+            <h2 style="margin-top: 50px; color: #764ba2; border-color: #dc3545;">🚀 Queries Avançadas</h2>
+    <br />
+            <h3 style="margin-top: 30px; color: #764ba2;">18. Subconsulta (Subquery)</h3>
+                <br />
+            <div class="code-example">
+                    
+<span class="comment">-- Funcionários que ganham mais que a média</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, salary
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary > (
+    <span class="keyword">SELECT AVG</span>(salary) 
+    <span class="keyword">FROM</span> employees
+);
+
+<span class="comment">-- Funcionários do departamento com maior folha de pagamento</span>
+    <br />
+<span class="keyword">SELECT</span> first_name, last_name, department_id
+<span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> department_id = (
+    <span class="keyword">SELECT</span> department_id
+    <span class="keyword">FROM</span> employees
+    <span class="keyword">GROUP BY</span> department_id
+    <span class="keyword">ORDER BY SUM</span>(salary) <span class="keyword">DESC</span>
+    <span class="keyword">LIMIT</span> 1
+);
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">19. CASE - Lógica Condicional</h3>
+                <br />
+            <div class="code-example">
+<span class="comment">-- Classificar funcionários por faixa salarial</span>
+    <br />
+<span class="keyword">SELECT</span> 
+    first_name,
+    last_name,
+    salary,
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> salary < 5000 <span class="keyword">THEN</span> <span class="string">'Júnior'</span>
+        <span class="keyword">WHEN</span> salary < 10000 <span class="keyword">THEN</span> <span class="string">'Pleno'</span>
+        <span class="keyword">ELSE</span> <span class="string">'Sênior'</span>
+    <span class="keyword">END AS</span> nivel
+<span class="keyword">FROM</span> employees;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">20. Múltiplos JOINs - Consulta Completa</h3>
+                <br />
+            <div class="code-example">
+<span class="comment">-- Relatório completo: funcionário, cargo, departamento e localização</span>
+<br />
+<span class="keyword">SELECT</span> 
+    e.first_name,
+    e.last_name,
+    j.job_title,
+    e.salary,
+    d.department_name,
+    l.city,
+    c.country_name,
+    r.region_name
+<span class="keyword">FROM</span> employees e
+<span class="keyword">INNER JOIN</span> jobs j <span class="keyword">ON</span> e.job_id = j.job_id
+<span class="keyword">INNER JOIN</span> departments d <span class="keyword">ON</span> e.department_id = d.department_id
+<span class="keyword">INNER JOIN</span> locations l <span class="keyword">ON</span> d.location_id = l.location_id
+<span class="keyword">INNER JOIN</span> countries c <span class="keyword">ON</span> l.country_id = c.country_id
+<span class="keyword">INNER JOIN</span> regions r <span class="keyword">ON</span> c.region_id = r.region_id
+<span class="keyword">ORDER BY</span> e.salary <span class="keyword">DESC</span>;
+            </div>
+
+            <h2 style="margin-top: 50px; color: #764ba2; border-color: #17a2b8;">💾 Operações de Manipulação de Dados</h2>
+                <br />
+
+            <h3 style="margin-top: 30px; color: #764ba2;">21. INSERT - Inserir Dados</h3>
+           
+            <div class="code-example">
+<span class="comment">-- Inserir um novo funcionário</span>
+ <br />
+<span class="keyword">INSERT INTO</span> employees (
+    first_name, 
+    last_name, 
+    email, 
+    phone_number, 
+    hire_date, 
+    job_id, 
+    salary,
+    department_id
+)
+<span class="keyword">VALUES</span> (
+    <span class="string">'John'</span>,
+    <span class="string">'Doe'</span>,
+    <span class="string">'john.doe@company.com'</span>,
+    <span class="string">'123-456-7890'</span>,
+    <span class="string">'2024-01-15'</span>,
+    5,
+    7500.00,
+    3
+);
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">22. UPDATE - Atualizar Dados</h3>
+                <br />
+            <div class="code-example">
+<span class="comment">-- Aumentar salário de um funcionário específico</span>
+    <br />
+<span class="keyword">UPDATE</span> employees
+<span class="keyword">SET</span> salary = salary * 1.10
+<span class="keyword">WHERE</span> employee_id = 100;
+    <br />
+<span class="comment">-- Atualizar departamento de múltiplos funcionários</span>
+    <br />
+<span class="keyword">UPDATE</span> employees
+<span class="keyword">SET</span> department_id = 5
+<span class="keyword">WHERE</span> department_id = 3 <span class="keyword">AND</span> salary > 8000;
+            </div>
+
+            <h3 style="margin-top: 30px; color: #764ba2;">23. DELETE - Deletar Dados</h3>
+            <div class="code-example">
+<span class="comment">-- Deletar um funcionário específico</span>
+    <br />
+<span class="keyword">DELETE FROM</span> employees
+<span class="keyword">WHERE</span> employee_id = 999;
+    <br />
+<span class="comment">-- Deletar funcionários de um departamento específico</span>
+    <br />
+<span class="keyword">DELETE FROM</span> employees
+<span class="keyword">WHERE</span> department_id = 10;
+    <br />
+<span class="comment">-- ⚠️ CUIDADO: Deletar TODOS os registros</span>
+<span class="comment">-- DELETE FROM employees; (use com extrema cautela!)</span>
+            </div>
+
+            <h2 style="margin-top: 50px; color: #764ba2; border-color: #6f42c1;">🎓 Dicas de Boas Práticas</h2>
+            
+            <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 25px; border-radius: 10px; margin-top: 20px;">
+                <h4 style="color: #764ba2; margin-bottom: 15px;">✅ Faça:</h4>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Use <strong>aliases</strong> para tornar queries mais legíveis</li>
+                    <li>Sempre use <strong>WHERE</strong> em UPDATE e DELETE para evitar alterações indesejadas</li>
+                    <li>Utilize <strong>LIMIT</strong> ao testar queries em produção</li>
+                    <li>Adicione <strong>ORDER BY</strong> quando a ordem importa</li>
+                    <li>Use <strong>índices</strong> em colunas frequentemente consultadas</li>
+                </ul>
+                
+                <h4 style="color: #dc3545; margin: 20px 0 15px 0;">❌ Evite:</h4>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Usar <strong>SELECT *</strong> em produção (especifique as colunas)</li>
+                    <li>Fazer UPDATE/DELETE sem WHERE (pode alterar/deletar tudo!)</li>
+                    <li>Usar funções em WHERE (pode tornar a query lenta)</li>
+                    <li>Criar queries muito complexas (divida em etapas menores)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">🚀</span>Por que SQL é Importante?</h2>
+            <p style="margin-bottom: 20px;">SQL continua sendo uma das habilidades mais valiosas no mundo da tecnologia:</p>
+            <div class="example-grid">
+                <div class="example-card">
+                    <div class="example-title">🌍 Universal</div>
+                    <p>Usado em praticamente todos os bancos de dados relacionais</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">⚡ Poderoso</div>
+                    <p>Processa milhões de registros com eficiência</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">📚 Padronizado</div>
+                    <p>Segue padrões internacionais reconhecidos</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">💼 Valioso</div>
+                    <p>Essencial para profissionais de dados e desenvolvimento</p>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 40px; color: white;">
+            <p style="font-size: 1.2em;">SQL: Transformando dados em conhecimento desde 1974</p>
+        </footer>
+    </div>
+</body>
+</html>
