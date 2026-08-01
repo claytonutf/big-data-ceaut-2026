@@ -1,0 +1,11 @@
+timestamp,machine_id,machine_type,part_id,operator,cycle_time,temperature,vibration,power_consumption,rpm,tool_number,tool_wear,status,error_code,production_count
+2026-07-31 08:00:01,CNC-01,Centro de Usinagem,P0001,Carlos,21.4,39.5,0.21,4.80,3500,T01,12.5,RUNNING,,1
+2026-07-31 08:00:23,CNC-01,Centro de Usinagem,P0002,Carlos,20.8,40.2,0.23,4.95,3510,T01,12.7,RUNNING,,2
+2026-07-31 08:00:45,CNC-01,Centro de Usinagem,P0003,Carlos,22.1,41.0,0.25,5.10,3490,T01,13.0,RUNNING,,3
+2026-07-31 08:01:08,CNC-02,Torno CNC,P0004,Ana,18.9,37.8,0.18,4.20,2800,T03,7.5,RUNNING,,1
+2026-07-31 08:01:29,CNC-02,Torno CNC,P0005,Ana,19.5,38.2,0.20,4.30,2815,T03,7.8,RUNNING,,2
+2026-07-31 08:01:55,CNC-03,Fresadora CNC,P0006,Marcos,24.7,42.5,0.35,5.80,4100,T07,25.3,RUNNING,,1
+2026-07-31 08:02:18,CNC-03,Fresadora CNC,P0007,Marcos,25.0,43.0,0.38,5.95,4120,T07,25.8,WARNING,W001,2
+2026-07-31 08:02:41,CNC-01,Centro de Usinagem,P0008,Carlos,21.0,46.5,0.61,6.30,3520,T01,14.2,ERROR,E102,4
+2026-07-31 08:03:05,CNC-02,Torno CNC,P0009,Ana,19.1,39.4,0.22,4.40,2820,T03,8.1,RUNNING,,3
+2026-07-31 08:03:30,CNC-03,Fresadora CNC,P0010,Marcos,24.2,41.8,0.30,5.60,4090,T07,26.1,RUNNING,,3

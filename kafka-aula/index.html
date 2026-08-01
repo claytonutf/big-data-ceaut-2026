@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Kafka — Painel Didático | CEAUT UTFPR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F6F7;
+    --bg-alt:#EBF0F1;
+    --panel:#FFFFFF;
+    --panel-2:#EEF3F4;
+    --border:#D3DEE1;
+    --text:#152025;
+    --text-dim:#5B7178;
+    --amber:#B96A16;
+    --teal:#177F73;
+    --red:#B93E27;
+    --display: 'Oswald', sans-serif;
+    --body: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:
+      linear-gradient(var(--bg) 0%, var(--bg) 100%),
+      repeating-linear-gradient(0deg, rgba(23,127,115,0.055) 0px, rgba(23,127,115,0.055) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(90deg, rgba(23,127,115,0.055) 0px, rgba(23,127,115,0.055) 1px, transparent 1px, transparent 34px);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    min-height:100vh;
+  }
+
+  a{color:var(--teal);}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(243,246,247,0.9);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 28px;
+    max-width:1100px; margin:0 auto;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.06em;
+    color:var(--text-dim);
+  }
+  .status{display:flex; align-items:center; gap:8px;}
+  .led{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--teal);
+    box-shadow:0 0 8px 2px rgba(23,127,115,0.45);
+    animation:pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:0.35;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:96px 0 64px;
+    position:relative;
+    overflow:hidden;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--amber);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    display:inline-block;
+    border:1px solid rgba(185,106,22,0.4);
+    padding:4px 10px;
+    border-radius:2px;
+    margin-bottom:22px;
+  }
+  h1.title{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(48px, 8vw, 92px);
+    line-height:0.98;
+    letter-spacing:-0.01em;
+    text-transform:uppercase;
+    color:var(--text);
+  }
+  h1.title span{color:var(--teal);}
+  .subtitle{
+    font-size:19px;
+    color:var(--text-dim);
+    max-width:640px;
+    margin-top:22px;
+  }
+
+  .flow-rule{
+    margin-top:40px;
+    height:2px;
+    width:100%;
+    max-width:640px;
+    background:linear-gradient(90deg, var(--teal), transparent 90%);
+    position:relative;
+    overflow:visible;
+  }
+  .flow-rule .dot{
+    position:absolute; top:-3px;
+    width:8px; height:8px; border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 8px 2px rgba(185,106,22,0.5);
+    animation:travel 3.4s linear infinite;
+  }
+  .flow-rule .dot:nth-child(2){animation-delay:1.1s;}
+  .flow-rule .dot:nth-child(3){animation-delay:2.2s;}
+  @keyframes travel{
+    0%{left:0%; opacity:0;}
+    8%{opacity:1;}
+    92%{opacity:1;}
+    100%{left:100%; opacity:0;}
+  }
+
+  /* ---------- Sections generic ---------- */
+  section{padding:72px 0;}
+  .section-head{
+    display:flex; align-items:baseline; gap:16px;
+    margin-bottom:44px;
+    border-bottom:1px solid var(--border);
+    padding-bottom:18px;
+  }
+  .section-tag{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--teal);
+    letter-spacing:0.1em;
+  }
+  h2.section-title{
+    font-family:var(--display);
+    font-size:clamp(28px, 4vw, 40px);
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    color:var(--text);
+  }
+  .section-desc{
+    color:var(--text-dim);
+    max-width:680px;
+    margin-bottom:40px;
+    margin-top:-20px;
+  }
+
+  .reveal{
+    opacity:0; transform:translateY(18px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- Timeline (história) ---------- */
+  .timeline{
+    position:relative;
+    padding-left:34px;
+  }
+  .timeline::before{
+    content:'';
+    position:absolute; left:6px; top:6px; bottom:6px;
+    width:2px;
+    background:linear-gradient(var(--teal), var(--amber));
+    opacity:0.55;
+  }
+  .tl-item{
+    position:relative;
+    padding-bottom:38px;
+  }
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:'';
+    position:absolute; left:-34px; top:4px;
+    width:14px; height:14px; border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--amber);
+  }
+  .tl-year{
+    font-family:var(--mono);
+    color:var(--amber);
+    font-size:14px;
+    letter-spacing:0.06em;
+    margin-bottom:6px;
+  }
+  .tl-title{
+    font-family:var(--display);
+    font-size:20px;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    color:var(--text);
+  }
+  .tl-text{color:var(--text-dim); max-width:620px; font-size:15px;}
+
+  /* ---------- Curiosidades (plates) ---------- */
+  .plates{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:18px;
+  }
+  .plate{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:22px 20px;
+    border-radius:3px;
+    box-shadow:0 1px 2px rgba(21,32,37,0.04);
+  }
+  .plate::before, .plate::after{
+    content:'';
+    position:absolute;
+    width:10px; height:10px;
+    border-color:var(--teal);
+    opacity:0.6;
+  }
+  .plate::before{top:6px; left:6px; border-top:2px solid; border-left:2px solid;}
+  .plate::after{bottom:6px; right:6px; border-bottom:2px solid; border-right:2px solid;}
+  .plate-icon{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--teal);
+    letter-spacing:0.08em;
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+  .plate-text{font-size:14.5px; color:var(--text);}
+  .plate-text b{color:var(--amber); font-weight:600;}
+
+  /* ---------- Diagrama ---------- */
+  .diagram-panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:36px 20px;
+    overflow-x:auto;
+    box-shadow:0 1px 3px rgba(21,32,37,0.05);
+  }
+  .diagram-caption{
+    text-align:center;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    margin-top:18px;
+    letter-spacing:0.04em;
+  }
+  .legend{
+    display:flex; flex-wrap:wrap; gap:22px;
+    margin-top:26px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+  .legend-item{display:flex; align-items:center; gap:8px;}
+  .swatch{width:12px; height:12px; border-radius:2px;}
+
+  /* moving packets along kafka diagram */
+  .packet{
+    animation:movepacket 3s linear infinite;
+  }
+  @keyframes movepacket{
+    from{ offset-distance: 0%; }
+    to{ offset-distance: 100%; }
+  }
+
+  /* ---------- Exemplo prático ---------- */
+  .example-flow{
+    display:flex; flex-wrap:wrap; align-items:stretch; gap:0;
+    margin-bottom:36px;
+  }
+  .ex-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:20px 18px;
+    flex:1 1 200px;
+    min-width:190px;
+    box-shadow:0 1px 2px rgba(21,32,37,0.04);
+  }
+  .ex-card .ex-tag{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--amber);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .ex-card h4{
+    font-family:var(--display);
+    font-size:17px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+    color:var(--text);
+  }
+  .ex-card p{font-size:13.8px; color:var(--text-dim);}
+  .ex-arrow{
+    display:flex; align-items:center; justify-content:center;
+    color:var(--teal);
+    font-family:var(--mono);
+    font-size:20px;
+    padding:0 12px;
+    min-width:36px;
+  }
+  .ex-note{
+    background:var(--panel-2);
+    border-left:3px solid var(--teal);
+    padding:16px 20px;
+    font-size:14.5px;
+    color:var(--text-dim);
+    border-radius:0 3px 3px 0;
+  }
+  .ex-note b{color:var(--text);}
+
+  /* ---------- Ecossistema (integração) ---------- */
+  .eco-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+    gap:18px;
+    margin-bottom:36px;
+  }
+  .eco-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:22px 20px;
+    box-shadow:0 1px 2px rgba(21,32,37,0.04);
+  }
+  .eco-card.highlight{
+    border-color:var(--teal);
+    border-width:1.5px;
+  }
+  .eco-tag{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:8px;
+  }
+  .eco-card h4{
+    font-family:var(--display);
+    font-size:18px;
+    text-transform:uppercase;
+    color:var(--text);
+    margin-bottom:8px;
+  }
+  .eco-card p{font-size:14px; color:var(--text-dim);}
+
+  /* ---------- Fontes ---------- */
+  .sources-list{
+    list-style:none;
+    counter-reset:src;
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+    background:var(--panel);
+  }
+  .sources-list li{
+    counter-increment:src;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:6px 18px;
+    align-items:baseline;
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    font-size:14px;
+  }
+  .sources-list li:last-child{border-bottom:none;}
+  .sources-list li::before{
+    content:counter(src, decimal-leading-zero);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--teal);
+    grid-row:1 / 3;
+    align-self:center;
+  }
+  .src-name{font-family:var(--display); text-transform:uppercase; letter-spacing:0.01em; color:var(--text); grid-column:2;}
+  .src-detail{grid-column:2; color:var(--text-dim); font-size:13px;}
+  .src-url{grid-row:1; grid-column:3; font-family:var(--mono); font-size:12px; color:var(--amber); align-self:start; white-space:nowrap;}
+
+  @media (max-width:600px){
+    .sources-list li{grid-template-columns:auto 1fr; }
+    .src-url{grid-column:2; grid-row:3; color:var(--amber);}
+  }
+
+  /* ---------- Footer / nameplate ---------- */
+  footer{
+    padding:56px 0 70px;
+  }
+  .nameplate{
+    border:1px solid var(--border);
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border-radius:4px;
+    padding:26px 30px;
+    display:flex; flex-wrap:wrap;
+    justify-content:space-between;
+    gap:20px;
+    align-items:center;
+    box-shadow:0 1px 3px rgba(21,32,37,0.05);
+  }
+  .nameplate-left .np-label{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--text-dim);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .nameplate-left .np-name{
+    font-family:var(--display);
+    font-size:20px;
+    text-transform:uppercase;
+    color:var(--text);
+  }
+  .nameplate-right{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--text-dim);
+    text-align:right;
+  }
+  .nameplate-right div:first-child{color:var(--teal); margin-bottom:4px;}
+
+  @media (max-width:640px){
+    .example-flow{flex-direction:column;}
+    .ex-arrow{transform:rotate(90deg); padding:6px 0;}
+    .nameplate{flex-direction:column; align-items:flex-start;}
+    .nameplate-right{text-align:left;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .led, .flow-rule .dot, .packet{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>UTFPR // CEAUT — MATERIAL DIDÁTICO</span>
+    <span class="status"><span class="led"></span> BROKER: ONLINE</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">Sistemas Distribuídos &amp; Automação</span>
+    <h1 class="title">Apache <span>Kafka</span></h1>
+    <p class="subtitle">A plataforma de streaming de eventos que virou a esteira de transporte de dados por trás das maiores arquiteturas do mundo — do chão de fábrica ao data center.</p>
+    <div class="flow-rule">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <div class="section-head reveal">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">Linha do Tempo</h2>
+    </div>
+    <p class="section-desc reveal">Kafka nasceu de um problema muito concreto de engenharia — não de uma ideia acadêmica — e isso explica boa parte do seu desenho pragmático.</p>
+
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-year">2010</div>
+        <div class="tl-title">O problema no LinkedIn</div>
+        <p class="tl-text">A equipe de infraestrutura do LinkedIn — Jay Kreps, Neha Narkhede e Jun Rao — enfrentava um gargalo: dezenas de sistemas internos (monitoramento, recomendação, métricas, logs) precisavam trocar grandes volumes de dados em tempo real, e as filas de mensagens tradicionais não escalavam nesse cenário.</p>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2011</div>
+        <div class="tl-title">Nasce o Kafka e ele ganha nome de escritor</div>
+        <p class="tl-text">O sistema foi batizado em homenagem ao escritor Franz Kafka. Jay Kreps, que tinha formação em literatura, escolheu o nome por gostar da obra do autor e por achar apropriado para um sistema otimizado para <b style="color:var(--amber)">escrita</b> de dados.</p>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2011</div>
+        <div class="tl-title">Código aberto</div>
+        <p class="tl-text">O LinkedIn doa o projeto à Apache Software Foundation, tornando-o incubador open source.</p>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2012</div>
+        <div class="tl-title">Projeto de topo da Apache</div>
+        <p class="tl-text">Kafka se gradua como projeto de nível superior (Top-Level Project) da Apache Software Foundation, sinalizando maturidade e comunidade própria.</p>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2014</div>
+        <div class="tl-title">Nasce a Confluent</div>
+        <p class="tl-text">Os criadores originais fundam a Confluent para dar suporte comercial, criar ferramentas complementares (Schema Registry, ksqlDB, conectores) e acelerar o desenvolvimento.</p>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2015 – hoje</div>
+        <div class="tl-title">Adoção industrial em escala global</div>
+        <p class="tl-text">Netflix, Uber, Airbnb, Spotify e milhares de outras empresas passam a usar Kafka como espinha dorsal de arquiteturas orientadas a eventos — e a Indústria 4.0 o adota para integrar CLPs, SCADA, MES e ERP em tempo real.</p>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2022 – 2025</div>
+        <div class="tl-title">Adeus, ZooKeeper</div>
+        <p class="tl-text">O modo KRaft passa a ser considerado pronto para produção na versão 3.3 (2022) e, com o lançamento do Kafka 4.0 em março de 2025, o Apache ZooKeeper é removido por completo — o cluster passa a coordenar seus próprios metadados internamente, sem dependência externa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="curiosidades">
+    <div class="section-head reveal">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">Curiosidades</h2>
+    </div>
+    <p class="section-desc reveal">Fatos que ajudam a entender por que o Kafka é diferente de uma fila de mensagens comum.</p>
+
+    <div class="plates">
+      <div class="plate reveal">
+        <div class="plate-icon">◈ Origem do nome</div>
+        <div class="plate-text">O nome não é um acrônimo: é uma referência direta ao escritor <b>Franz Kafka</b>, cujas obras marcaram o criador do projeto.</div>
+      </div>
+      <div class="plate reveal">
+        <div class="plate-icon">◈ Não é uma fila comum</div>
+        <div class="plate-text">Kafka é, na essência, um <b>log distribuído e durável</b>: as mensagens não desaparecem ao serem lidas, podendo ser reprocessadas por múltiplos consumidores.</div>
+      </div>
+      <div class="plate reveal">
+        <div class="plate-icon">◈ Escala brutal</div>
+        <div class="plate-text">Empresas como o LinkedIn processam <b>trilhões de mensagens por dia</b> em clusters Kafka, sustentando feeds, métricas e recomendações em tempo real.</div>
+      </div>
+      <div class="plate reveal">
+        <div class="plate-icon">◈ Linguagem</div>
+        <div class="plate-text">O núcleo do Kafka é escrito em <b>Scala e Java</b>, rodando sobre a JVM.</div>
+      </div>
+      <div class="plate reveal">
+        <div class="plate-icon">◈ Particionamento</div>
+        <div class="plate-text">Cada tópico é dividido em <b>partições</b> distribuídas entre servidores (brokers), o que permite escalar horizontalmente lendo e escrevendo em paralelo.</div>
+      </div>
+      <div class="plate reveal">
+        <div class="plate-icon">◈ Indústria 4.0</div>
+        <div class="plate-text">É amplamente usado para conectar o <b>chão de fábrica (OT)</b> — sensores, CLPs e SCADA — à camada corporativa (TI), sem integrações ponto a ponto.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="diagrama">
+    <div class="section-head reveal">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">Como Funciona</h2>
+    </div>
+    <p class="section-desc reveal">Pense no Kafka como uma esteira industrial de dados: produtores depositam itens (mensagens) em canais organizados (tópicos e partições), e vários consumidores retiram esses itens no próprio ritmo, sem parar a esteira para os demais.</p>
+
+    <div class="diagram-panel reveal">
+      <svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; min-width:640px;" role="img" aria-label="Diagrama do funcionamento do Apache Kafka">
+        <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#5B7178">
+          <text x="40" y="70" fill="#B96A16" font-size="12" letter-spacing="1">PRODUTORES</text>
+        </g>
+        <g>
+          <rect x="30" y="90" width="120" height="46" rx="4" fill="#EEF3F4" stroke="#D3DEE1"/>
+          <text x="90" y="118" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="13">Sensor / CLP</text>
+
+          <rect x="30" y="150" width="120" height="46" rx="4" fill="#EEF3F4" stroke="#D3DEE1"/>
+          <text x="90" y="178" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="13">App de Vendas</text>
+
+          <rect x="30" y="210" width="120" height="46" rx="4" fill="#EEF3F4" stroke="#D3DEE1"/>
+          <text x="90" y="238" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="13">Serviço Web</text>
+        </g>
+
+        <path id="pipeIn" d="M150,163 C 230,163 250,190 320,190" stroke="#D3DEE1" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <path d="M150,163 C 230,163 250,190 320,190" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="5" fill="#B96A16" class="packet">
+          <animateMotion dur="2.6s" repeatCount="indefinite" path="M150,163 C 230,163 250,190 320,190"/>
+        </circle>
+
+        <g>
+          <rect x="320" y="70" width="260" height="240" rx="6" fill="#FFFFFF" stroke="#177F73" stroke-opacity="0.5"/>
+          <text x="450" y="95" text-anchor="middle" fill="#177F73" font-family="Oswald" font-size="15" letter-spacing="1">CLUSTER KAFKA</text>
+
+          <text x="450" y="118" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="10">TÓPICO: sensores-temperatura</text>
+
+          <rect x="345" y="130" width="210" height="34" rx="3" fill="#F3F6F7" stroke="#D3DEE1"/>
+          <text x="355" y="151" fill="#152025" font-family="IBM Plex Mono" font-size="11">P0</text>
+          <rect x="345" y="170" width="210" height="34" rx="3" fill="#F3F6F7" stroke="#D3DEE1"/>
+          <text x="355" y="191" fill="#152025" font-family="IBM Plex Mono" font-size="11">P1</text>
+          <rect x="345" y="210" width="210" height="34" rx="3" fill="#F3F6F7" stroke="#D3DEE1"/>
+          <text x="355" y="231" fill="#152025" font-family="IBM Plex Mono" font-size="11">P2</text>
+
+          <text x="450" y="268" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="10">Brokers replicam cada partição</text>
+          <text x="450" y="285" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="10">entre servidores do cluster</text>
+        </g>
+
+        <path d="M580,190 C 650,190 670,163 750,163" stroke="#D3DEE1" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <path d="M580,190 C 650,190 670,163 750,163" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="5" fill="#B93E27" class="packet">
+          <animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite" path="M580,190 C 650,190 670,163 750,163"/>
+        </circle>
+
+        <path d="M580,210 C 650,210 670,237 750,237" stroke="#D3DEE1" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <path d="M580,210 C 650,210 670,237 750,237" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="5" fill="#B93E27" class="packet">
+          <animateMotion dur="2.6s" begin="0.4s" repeatCount="indefinite" path="M580,210 C 650,210 670,237 750,237"/>
+        </circle>
+
+        <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#5B7178">
+          <text x="760" y="70" fill="#B96A16" font-size="12" letter-spacing="1">CONSUMIDORES</text>
+        </g>
+        <rect x="750" y="90" width="120" height="46" rx="4" fill="#EEF3F4" stroke="#D3DEE1"/>
+        <text x="810" y="112" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="12">Grupo A</text>
+        <text x="810" y="128" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9">Alertas em tempo real</text>
+
+        <rect x="750" y="210" width="120" height="46" rx="4" fill="#EEF3F4" stroke="#D3DEE1"/>
+        <text x="810" y="232" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="12">Grupo B</text>
+        <text x="810" y="248" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9">Armazenamento / BI</text>
+      </svg>
+
+      <div class="legend">
+        <div class="legend-item"><span class="swatch" style="background:#B96A16"></span> Mensagem publicada</div>
+        <div class="legend-item"><span class="swatch" style="background:#B93E27"></span> Mensagem entregue</div>
+        <div class="legend-item"><span class="swatch" style="background:#177F73"></span> Canal (tópico/partição)</div>
+      </div>
+      <div class="diagram-caption">Cada grupo de consumidores lê a esteira no seu próprio ritmo — sem retirar as mensagens da esteira para os demais.</div>
+    </div>
+  </section>
+
+  <section id="exemplo">
+    <div class="section-head reveal">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">Exemplo Prático</h2>
+    </div>
+    <p class="section-desc reveal">Uma situação típica de automação industrial: monitorar a vibração de motores em uma linha de produção, sem acoplar diretamente o chão de fábrica aos sistemas corporativos.</p>
+
+    <div class="example-flow reveal">
+      <div class="ex-card">
+        <div class="ex-tag">Origem — OT</div>
+        <h4>Sensores de Vibração</h4>
+        <p>Acelerômetros instalados nos motores enviam leituras a cada segundo para um gateway industrial conectado à rede.</p>
+      </div>
+      <div class="ex-arrow">→</div>
+      <div class="ex-card">
+        <div class="ex-tag">Canal Kafka</div>
+        <h4>Tópico "vibracao-motores"</h4>
+        <p>O gateway publica cada leitura nesse tópico. As partições distribuem a carga entre os motores monitorados.</p>
+      </div>
+      <div class="ex-arrow">→</div>
+      <div class="ex-card">
+        <div class="ex-tag">Consumo em tempo real</div>
+        <h4>Painel de Alertas</h4>
+        <p>Um serviço consome o tópico continuamente e dispara um alerta visual assim que detecta vibração fora do padrão.</p>
+      </div>
+      <div class="ex-arrow">→</div>
+      <div class="ex-card">
+        <div class="ex-tag">Consumo em lote</div>
+        <h4>Manutenção Preditiva</h4>
+        <p>Em paralelo, outro grupo consome o mesmo tópico e grava o histórico em um data lake para treinar modelos de previsão de falhas.</p>
+      </div>
+    </div>
+
+    <div class="ex-note reveal">
+      <b>Por que isso importa na automação industrial:</b> sem o Kafka, cada novo sistema (alerta, histórico, BI, manutenção preditiva) precisaria de uma integração própria com o gateway dos sensores. Com o Kafka, o gateway publica uma única vez, e qualquer número de sistemas pode "ouvir" o mesmo canal — desacoplando a camada de chão de fábrica (OT) da camada corporativa (TI).
+    </div>
+  </section>
+
+  <section id="ecossistema">
+    <div class="section-head reveal">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Integração com Outros Sistemas</h2>
+    </div>
+    <p class="section-desc reveal">O Kafka raramente trabalha sozinho. Ele funciona como um canal central e neutro ao qual diversas ferramentas de processamento e armazenamento podem se conectar — cada uma lendo o mesmo fluxo de eventos à sua maneira.</p>
+
+    <div class="diagram-panel reveal" style="margin-bottom:36px;">
+      <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; min-width:640px;" role="img" aria-label="Diagrama de integração do Kafka com outros sistemas, incluindo o Apache Spark">
+        <g>
+          <rect x="30" y="105" width="170" height="90" rx="6" fill="#FFFFFF" stroke="#177F73" stroke-opacity="0.5"/>
+          <text x="115" y="135" text-anchor="middle" fill="#177F73" font-family="Oswald" font-size="15" letter-spacing="1">CLUSTER</text>
+          <text x="115" y="153" text-anchor="middle" fill="#177F73" font-family="Oswald" font-size="15" letter-spacing="1">KAFKA</text>
+          <text x="115" y="178" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="10">tópicos / partições</text>
+        </g>
+
+        <path d="M200,150 C 250,150 250,80 320,80" stroke="#D3DEE1" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M200,150 C 250,150 250,80 320,80" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="4.5" fill="#B96A16" class="packet"><animateMotion dur="2.4s" repeatCount="indefinite" path="M200,150 C 250,150 250,80 320,80"/></circle>
+
+        <path d="M200,150 C 260,150 260,150 320,150" stroke="#D3DEE1" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M200,150 C 260,150 260,150 320,150" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="4.5" fill="#B96A16" class="packet"><animateMotion dur="2.4s" begin="0.8s" repeatCount="indefinite" path="M200,150 C 260,150 260,150 320,150"/></circle>
+
+        <path d="M200,150 C 250,150 250,220 320,220" stroke="#D3DEE1" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M200,150 C 250,150 250,220 320,220" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="4.5" fill="#B96A16" class="packet"><animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite" path="M200,150 C 250,150 250,220 320,220"/></circle>
+
+        <rect x="320" y="52" width="230" height="56" rx="5" fill="#FFF6EC" stroke="#B96A16" stroke-width="1.5"/>
+        <text x="435" y="75" text-anchor="middle" fill="#B96A16" font-family="Oswald" font-size="15" letter-spacing="0.5">APACHE SPARK</text>
+        <text x="435" y="93" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9.5">Structured Streaming — análises e ML em tempo real</text>
+
+        <rect x="320" y="122" width="230" height="56" rx="5" fill="#EEF3F4" stroke="#D3DEE1"/>
+        <text x="435" y="145" text-anchor="middle" fill="#152025" font-family="Oswald" font-size="15" letter-spacing="0.5">KAFKA CONNECT</text>
+        <text x="435" y="163" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9.5">Bancos de dados, S3, Elasticsearch</text>
+
+        <rect x="320" y="192" width="230" height="56" rx="5" fill="#EEF3F4" stroke="#D3DEE1"/>
+        <text x="435" y="215" text-anchor="middle" fill="#152025" font-family="Oswald" font-size="15" letter-spacing="0.5">KSQLDB</text>
+        <text x="435" y="233" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9.5">Consultas SQL contínuas sobre os tópicos</text>
+
+        <path d="M550,80 C 610,80 610,80 660,80" stroke="#D3DEE1" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M550,80 C 610,80 610,80 660,80" stroke="#B96A16" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="4" fill="#B93E27" class="packet"><animateMotion dur="2.2s" repeatCount="indefinite" path="M550,80 C 610,80 610,80 660,80"/></circle>
+
+        <rect x="660" y="52" width="210" height="56" rx="5" fill="#FFFFFF" stroke="#D3DEE1"/>
+        <text x="765" y="75" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="13">Dashboard de Alertas</text>
+        <text x="765" y="93" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9.5">Grafana / painel SCADA</text>
+
+        <path d="M550,150 C 610,150 610,150 660,150" stroke="#D3DEE1" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M550,150 C 610,150 610,150 660,150" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="4" fill="#B93E27" class="packet"><animateMotion dur="2.2s" begin="0.7s" repeatCount="indefinite" path="M550,150 C 610,150 610,150 660,150"/></circle>
+
+        <rect x="660" y="122" width="210" height="56" rx="5" fill="#FFFFFF" stroke="#D3DEE1"/>
+        <text x="765" y="145" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="13">Data Warehouse</text>
+        <text x="765" y="163" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9.5">Histórico para relatórios</text>
+
+        <path d="M550,220 C 610,220 610,220 660,220" stroke="#D3DEE1" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M550,220 C 610,220 610,220 660,220" stroke="#177F73" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.6"/>
+        <circle r="4" fill="#B93E27" class="packet"><animateMotion dur="2.2s" begin="1.4s" repeatCount="indefinite" path="M550,220 C 610,220 610,220 660,220"/></circle>
+
+        <rect x="660" y="192" width="210" height="56" rx="5" fill="#FFFFFF" stroke="#D3DEE1"/>
+        <text x="765" y="215" text-anchor="middle" fill="#152025" font-family="IBM Plex Sans" font-size="13">Aplicações Web</text>
+        <text x="765" y="233" text-anchor="middle" fill="#5B7178" font-family="IBM Plex Mono" font-size="9.5">Consultas via API</text>
+      </svg>
+      <div class="diagram-caption">O mesmo tópico Kafka pode alimentar, ao mesmo tempo, análises em Spark, conectores para outros sistemas e consultas contínuas em ksqlDB.</div>
+    </div>
+
+    <div class="eco-grid">
+      <div class="eco-card highlight reveal">
+        <div class="eco-tag">◈ Destaque</div>
+        <h4>Apache Spark</h4>
+        <p>Com o módulo <b>Structured Streaming</b>, o Spark lê continuamente um ou mais tópicos Kafka e aplica processamento pesado: agregações em janelas de tempo, junções entre fluxos e até modelos de machine learning — algo que o próprio Kafka não faz sozinho.</p>
+      </div>
+      <div class="eco-card reveal">
+        <div class="eco-tag">◈ Integração simples</div>
+        <h4>Kafka Connect</h4>
+        <p>Framework de conectores prontos que ligam o Kafka a bancos de dados, sistemas de arquivos, Elasticsearch e serviços em nuvem, sem que seja preciso programar a integração do zero.</p>
+      </div>
+      <div class="eco-card reveal">
+        <div class="eco-tag">◈ Consultas contínuas</div>
+        <h4>ksqlDB</h4>
+        <p>Permite escrever consultas em SQL que rodam continuamente sobre os tópicos, gerando novos tópicos derivados — útil para regras de negócio simples sem escrever uma aplicação completa.</p>
+      </div>
+    </div>
+
+    <div class="ex-note reveal">
+      <b>Kafka + Spark na prática:</b> o Kafka entrega os eventos brutos dos sensores em tempo real; o Spark Structured Streaming consome esse fluxo, calcula médias móveis e detecta anomalias estatísticas de vibração, publicando o resultado de volta em outro tópico Kafka — que então alimenta o painel de alertas e o data warehouse.
+    </div>
+  </section>
+
+  <section id="fontes">
+    <div class="section-head reveal">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">Fontes</h2>
+    </div>
+    <p class="section-desc reveal">Referências consultadas na elaboração deste material, para verificação e aprofundamento.</p>
+
+    <ol class="sources-list reveal">
+      <li><span class="src-name">Apache Kafka — Documentação oficial</span><span class="src-detail">Guia de upgrade e página do ZooKeeper (versões 3.7/4.0)</span><span class="src-url">kafka.apache.org</span></li>
+      <li><span class="src-name">Confluent — Blog e materiais educativos</span><span class="src-detail">História do Kafka, migração ZooKeeper → KRaft, lançamento do Kafka 4.0</span><span class="src-url">confluent.io</span></li>
+      <li><span class="src-name">LinkedIn Engineering Blog</span><span class="src-detail">Postagens originais sobre a criação do Kafka e a marca de 1 trilhão de mensagens/dia</span><span class="src-url">linkedin.com/blog/engineering</span></li>
+      <li><span class="src-name">Wikipedia</span><span class="src-detail">Verbetes sobre Confluent e Neha Narkhede (datas de fundação e biografias)</span><span class="src-url">en.wikipedia.org</span></li>
+    </ol>
+    <p class="section-desc reveal" style="margin-top:24px; margin-bottom:0; font-size:13px;">Conteúdo revisado e verificado em julho de 2026. Como qualquer material de ensino, recomenda-se consultar a documentação oficial para decisões de projeto em produção.</p>
+  </section>
+
+  <footer>
+    <div class="nameplate reveal">
+      <div class="nameplate-left">
+        <div class="np-label">Material elaborado por</div>
+        <div class="np-name">Professor Clayton Kossoski</div>
+      </div>
+      <div class="nameplate-right">
+        <div>Universidade Tecnológica Federal do Paraná</div>
+        <div>Curso de Especialização em Automação Industrial (CEAUT)</div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.12});
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
