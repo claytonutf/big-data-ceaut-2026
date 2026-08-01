@@ -20,7 +20,7 @@ from kafka import KafkaProducer
 # -------------------------------------------------------------
 # Arquivo de vídeo que será transmitido
 # -------------------------------------------------------------
-VIDEO = "datasets/cars.mp4"
+VIDEO = "cars.mp4"
 
 # Nome do tópico Kafka
 TOPIC = "video"
