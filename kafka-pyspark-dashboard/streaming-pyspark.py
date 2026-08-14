@@ -255,7 +255,7 @@ query = (
         "checkpoints/parquet"
     )
     .trigger(
-        processingTime="5 seconds"
+        processingTime="2 seconds"
     )
     .start()
 )
