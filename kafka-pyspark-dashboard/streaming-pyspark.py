@@ -4,7 +4,12 @@ conda activate ceaut
 
 cd kafka-pyspark-dashboard
 
-spark-submit  --packages org.apache.spark:spark-sql-kafka-0-10_2.13:4.2.0  streaming-pyspark.py
+set PYSPARK_PYTHON=%CONDA_PREFIX%\python.exe
+
+set PYSPARK_DRIVER_PYTHON=%CONDA_PREFIX%\python.exe
+
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.9 streaming-pyspark.py
+    
 '''
 
 
