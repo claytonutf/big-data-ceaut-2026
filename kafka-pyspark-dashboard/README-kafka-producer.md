@@ -129,13 +129,13 @@ Antes de executar o Producer, o servidor Kafka deve estar em execução.
 Considerando a instalação:
 
 ```text
-kafka_2.13-4.3.1
+c:\kafka
 ```
 
 acesse o diretório:
 
 ```bash
-cd kafka_2.13-4.3.1
+c:\kafka\bin\windows
 ```
 
 Inicialize o Kafka conforme a configuração utilizada no ambiente.

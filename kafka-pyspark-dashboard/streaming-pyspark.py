@@ -1,8 +1,13 @@
 #--- Como executar (2):
 '''
-conda activate ceaut
+Selecionar com botão direito o diretório kafka-pyspark-dashboard e clicar em Copy Path
 
-cd kafka-pyspark-dashboard
+Abrir um novo CMD
+
+digitar:
+cd <pressionar ctrl+v>
+
+conda activate ceaut
 
 set PYSPARK_PYTHON=%CONDA_PREFIX%\python.exe
 
